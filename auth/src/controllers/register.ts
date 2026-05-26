@@ -4,7 +4,7 @@ import User from "../models/User.ts"
 
 export const registerController = Router();
 
-registerController.post("/auth/v1/register", async (req, res) => {
+registerController.post("/auth/v1/register", async (req, res, next) => {
     try {
         res.locals = { body: await registerSchema.validateAsync(req.body)};
     } catch (err) {
@@ -12,18 +12,18 @@ registerController.post("/auth/v1/register", async (req, res) => {
                   .send(err)
     };
 
-    // try {
-    //     const {
-    //         username,
-    //         emailAddress,
-    //         phoneNumber,
-    //         password
-    //     } = res.locals.body;
+    try {
+        const {
+            username,
+            emailAddress,
+            phoneNumber,
+            password
+        } = res.locals.body;
 
-    //     // check if user already exists.
-    // } catch (err) {
+        // check if user already exists.
+    } catch (err) {
 
-    // }
+    }
 
     const user = await User.create(res.locals.body);
 
