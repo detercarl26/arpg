@@ -15,6 +15,7 @@ registerController.post("/auth/v1/register", async (req, res, next) => {
     };
 
     const {
+        username,
         password
     } = res.locals.body;
 
@@ -27,8 +28,9 @@ registerController.post("/auth/v1/register", async (req, res, next) => {
 
     }
 
+    if(username) res.locals.body.username = username.toLowerCase()
+    
     const user = await User.create(res.locals.body);
 
-    // normalise username to lowercase.
-    res.send(user);
+    res.send("Successfully registed!");
 });
