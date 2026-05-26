@@ -2,12 +2,17 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
     username: {
-        type: String
+        type: String,
+        unique: true
     },
-    emailAddress: {
-        type: String
+    // 1.0 add check if both emailAddress and phoneNumber is empty throw err.
+    // 2.0 Email format validation?
+    email: { 
+        type: String,
+        unique: true
     },
-    phoneNumber: {
+    // 1.1
+    phone: {
         countryCallingCode: {
             type: String
         },
@@ -19,23 +24,27 @@ const userSchema = new mongoose.Schema({
         }
     },
     password: {
-        type: String
+        type: String,
+        required: true
     },
     authorization: {
         permissionLevel: {
-            type: Number,
-            default: 0
+            role: {
+                type: String,
+                enum: ["user", "admin"]
+            },
+            default: "user"
         },
         tokens: {
             passwordReset: {
-                type: Array
+                token: String,
+                expiresAt: Date
             }
         }
     },
     verification: {
         isVerified: {
             type: Boolean,
-            enum: [false, true],
             default: false
         },
         code: {
@@ -44,18 +53,14 @@ const userSchema = new mongoose.Schema({
             },
             createdAt: {
                 type: Date,
-                default: new Date()
+                default: () => new Date()
             },
             expiresAt: {
                 type: Date,
-                default: new Date(new Date().setHours(new Date().getHours() + 24)) // 24HRS
+                default: () => new Date(Date.now() + 24 * 60 * 60 * 1000) // 24HRS
             }
         }
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+}, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
