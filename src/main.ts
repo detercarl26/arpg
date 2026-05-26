@@ -1,60 +1,41 @@
-import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.ts'
+import { Application, Graphics } from 'pixi.js'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+async function main() {
+  const app = new Application()
 
-<div class="ticks"></div>
+  await app.init({
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: 0x1a1a2e,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true,
+  })
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+  document.body.appendChild(app.canvas)
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+  window.addEventListener('resize', () => {
+    app.renderer.resize(window.innerWidth, window.innerHeight)
+  })
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+  const player = new Graphics()
+  player.rect(0, 0, 32, 32).fill(0xe94560)
+  player.x = app.screen.width / 2
+  player.y = app.screen.height / 2
+  app.stage.addChild(player)
+
+  const keys: Record<string, boolean> = {}
+  window.addEventListener('keydown', e => keys[e.key] = true)
+  window.addEventListener('keyup',   e => keys[e.key] = false)
+
+  const speed = 200
+
+  app.ticker.add((ticker) => {
+    const dt = ticker.deltaTime / 60
+    if (keys['w'] || keys['ArrowUp'])    player.y -= speed * dt
+    if (keys['s'] || keys['ArrowDown'])  player.y += speed * dt
+    if (keys['a'] || keys['ArrowLeft'])  player.x -= speed * dt
+    if (keys['d'] || keys['ArrowRight']) player.x += speed * dt
+  })
+}
+
+main()
