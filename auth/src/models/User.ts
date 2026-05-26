@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     authorization: {
         permissionLevel: {
@@ -49,7 +50,8 @@ const userSchema = new mongoose.Schema({
         },
         code: {
             value: {
-                type: String
+                type: String,
+                select: false
             },
             createdAt: {
                 type: Date,
