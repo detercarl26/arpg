@@ -32,9 +32,9 @@ const userSchema = new mongoose.Schema({
         permissionLevel: {
             role: {
                 type: String,
-                enum: ["user", "admin"]
+                enum: ["user", "admin"],
+                default: "user"
             },
-            default: "user"
         },
         tokens: {
             passwordReset: {

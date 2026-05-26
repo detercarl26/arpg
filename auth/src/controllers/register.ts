@@ -3,6 +3,7 @@ import { registerSchema } from "../schemas/register.ts";
 import bcrypt from "bcrypt";
 import User from "../models/User.ts"
 
+import { checkUserExists } from "../middleware/checkUserExists.ts";
 export const registerController = Router();
 
 registerController.post("/auth/v1/register", async (req, res, next) => {
@@ -14,15 +15,10 @@ registerController.post("/auth/v1/register", async (req, res, next) => {
     };
 
     const {
-        username,
-        email,
-        number,
         password
     } = res.locals.body;
 
-    // check if user already exists.
-    // if user exists' throw err.
-
+    await checkUserExists(req, res, next);
 
     try {
         res.locals.body.password = bcrypt.hashSync(password, 8);
